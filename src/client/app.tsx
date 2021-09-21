@@ -1,6 +1,5 @@
 import React from "react";
 import { FILE_NAME } from "./constants";
-import { IDBService } from "./idb-service";
 
 export const App = () => {
   const onClickCrash = async () => {
@@ -13,14 +12,11 @@ export const App = () => {
       create: true,
     });
 
-    // persist handle in IndexedDB
-    await new IDBService().save({
-      path: FILE_NAME,
-      handle,
-    });
-
     // spawn worker that will do the download
-    new Worker("./worker.js");
+    const worker = new Worker("./worker.js");
+
+    // give worker a reference to the file handle
+    worker.postMessage(handle);
   };
 
   return (
